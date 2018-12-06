@@ -67,6 +67,10 @@ def main():
         events.append(Event(entry))
 
     events.sort(key=lambda x: x.time)
+    with open("input_sorted.txt", "w") as fp:
+        for event in events:
+            fp.write(str(event) + '\n')
+
     guards = {}
     shift = None
     guard = None
@@ -78,16 +82,17 @@ def main():
         if 'begins shift' in event.details:
             shift = Shift(event.time)
             guard_num = event.details.split()[1]
-            guard = Guard(guard_num)
+            guard = guards.get(guard_num, Guard(guard_num))
             guards[guard_num] = guard
             guard.add_shift(shift)
         else:
             guard.shifts[-1].update(event.details, event.time)
 
     for guard in guards:
-        print(f"Guard: {guards[guard]}",end="")
+        print(f"Guard: {guards[guard]}")
+        print("Shifts:")
         for shift in guards[guard].shifts:
-            print(f"\tShift: {shift}")    
+            print(f"\t{shift}")    
 
 if __name__ == '__main__':
     main()
